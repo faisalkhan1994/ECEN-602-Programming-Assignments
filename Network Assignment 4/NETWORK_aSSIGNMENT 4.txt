@@ -1,0 +1,66 @@
+************************************************************************************************************************************************************************
+						README
+************************************************************************************************************************************************************************
+TITLE :  Implementation of a simple HTTP proxy server and HTTP command line client based on RFC 1945 with additional caching feature.
+
+INTRODUCTION : 
+
+This code is a part of the Network simulation Assignment for ECEN 602 at Texas A&M University. 
+It has been sucessfully compiled, executed and tested on gcc compiler (part of standard LINUX).
+
+The Hypertext Transfer Protocol (HTTP) is an application protocol for distributed, collaborative, hypermedia information systems.
+HTTP functions as a request–response protocol in the client–server computing model.
+A web browser, for example, may be the client and an application running on a computer hosting a website may be the server. The client 
+submits an HTTP request message to the server. The server, which provides resources such as HTML files and other content, or performs 
+other functions on behalf of the client, returns a response message to the client. The response contains completion status information 
+about the request and may also contain requested content in its message body. HTTP resources are identified and located on the network 
+by Uniform Resource Locators (URLs), using the Uniform Resource Identifiers (URI's) schemes http and https. URIs and hyperlinks in HTML
+documents form interlinked hypertext documents. 
+HTTP client initiates a request by establishing a Transmission Control Protocol (TCP) connection to a particular port on a server 
+(typically port 80, occasionally port 8080; see List of TCP and UDP port numbers). An HTTP server listening on that port waits for a 
+client's request message. Upon receiving the request, the server sends back a status line, such as "HTTP/1.1 200 OK", and a message 
+of its own. The body of this message is typically the requested resource, although an error message or other information may also be 
+returned. In case of the web proxy server, it behaves like a server in the client-proxy interface and as a client in the 
+proxy-server interface.
+In this implementation, When the proxy server receives a client request, it will first check its cached data in an attempt to serve 
+the request. If there is not a valid cache entry, however, (1) the request will be proxied to the intended destination, (2) the response 
+will be sent by the proxy to the client, and (3) the response will also be cached by the proxy for later use. Your proxy cache should 
+maintain at least 10 document entries in the cache. Entries should be replaced in a Least Recently Used (LRU) fashion.
+
+Common Errors and Catches:
+
+-If data is not input correctly on the command line as per the ordering given below, it throws a segmentation error. 
+-This is NOT to be assumed as an error.
+-If data is missing from the command line, it throws segmentation error too.
+-This is an iterative server, fork() is not used instead select() is used.
+-The well-known socket for the HTTP server is port number 80 but the server uses a different one(asked in argument) and the connection is established in ephemeral port 
+as negotiated by the web server. This is done to avoid the creation of invariance in the proxy server processing.
+-The url format is "www.abcd.com/path".
+
+Usage:
+
+1. 'make clean' to remove all previously created object files.
+2. 'make' to compile the Server source code.
+3. ./proxy <ip to bind> <port to bind> to run the proxy server first.
+4. ./client <proxy address> <proxy port> <url to retrieve> to run the client.
+
+steps : 
+1. make 
+2. ./proxy <ip to bind> <port to bind>
+3. ./client <proxy address> <proxy port> <url to retrieve>
+
+Package content:
+1. proxy.c
+2. client.c
+3. Makefile
+
+Tests:
+1. A cache hit returns the saved data to the requester.
+2. A request that is not in the cache is proxied, saved in the cache, and returned to the requester.
+3. A cache miss with 10 items already in the cache is proxied, saved in the LRU location in cache, and the data is returned to the requester.
+4. A stale Expires header in the cache is accessed, the cache entry is replaced with a fresh copy, and the fresh data is delivered to the requester.
+5. A stale entry in the cache without an Expires header is determined based on the last Web server access time and last modification time, the stale 
+cache entry is replaced with fresh data, and the fresh data is delivered to the requester.
+6. A cache entry without an Expires header that has been previously accessed from the Web server in the last 24 hours and was last modified more than 
+one month ago is returned to the requester.
+7. Three clients can simultaneously access the proxy server and get the correct data.

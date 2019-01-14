@@ -1,0 +1,9 @@
+output: echo.C echos.c
+	gcc echo.o -o echo
+	gcc echos.o -o echos
+echos.o:echos.c
+	gcc -c echos.c
+echo.0: echo.C
+	gcc -c echo.C
+clean:
+  	rm *.o core
